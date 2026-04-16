@@ -245,79 +245,107 @@ else:
         st.bar_chart(payment_df.set_index("payment_method"))
 
     # =====================================================
-    # 🚀 SQL ANALYSIS / REPORTS (NEW REQUIREMENT)
+    # 🚀 SQL ANALYSIS (FIXED SECTION)
     # =====================================================
-    st.subheader("SQL Analysis / Reports")
+    st.subheader("SQL Query Analysis (15 Queries)")
 
-    report = st.selectbox("Choose Report", [
-        "Total Sales by Branch",
-        "Total Sales by Product",
-        "Monthly Sales Trend",
-        "Top Customers",
-        "Pending vs Received",
-        "Daily Sales Report",
-        "Branch Performance"
+    query_option = st.selectbox("Select Query", [
+        "1. View All Sales",
+        "2. View All Payments",
+        "3. Join Branch Details",
+        "4. Total Sales",
+        "5. Total Received",
+        "6. Total Pending",
+        "7. Sales by Branch",
+        "8. Sales by Product",
+        "9. Open Sales",
+        "10. Closed Sales",
+        "11. Payment Summary",
+        "12. Top Sales",
+        "13. Date Filter Sales",
+        "14. Customer Payment Summary",
+        "15. Branch Sales Count"
     ])
 
-    if report == "Total Sales by Branch":
+    if query_option == "1. View All Sales":
+        st.dataframe(pd.read_sql("SELECT * FROM customer_sales", conn))
+
+    elif query_option == "2. View All Payments":
+        st.dataframe(pd.read_sql("SELECT * FROM payment_splits", conn))
+
+    elif query_option == "3. Join Branch Details":
         q = """
-        SELECT b.branch_name, SUM(cs.gross_sales) total_sales
+        SELECT cs.sale_id, b.branch_name, cs.name, cs.product_name, cs.gross_sales
+        FROM customer_sales cs
+        JOIN branches b ON cs.branch_id = b.branch_id
+        """
+        st.dataframe(pd.read_sql(q, conn))
+
+    elif query_option == "4. Total Sales":
+        st.dataframe(pd.read_sql("SELECT SUM(gross_sales) AS total_sales FROM customer_sales", conn))
+
+    elif query_option == "5. Total Received":
+        st.dataframe(pd.read_sql("SELECT SUM(received_amount) AS total_received FROM customer_sales", conn))
+
+    elif query_option == "6. Total Pending":
+        st.dataframe(pd.read_sql("SELECT SUM(pending_amount) AS total_pending FROM customer_sales", conn))
+
+    elif query_option == "7. Sales by Branch":
+        q = """
+        SELECT b.branch_name, SUM(cs.gross_sales) AS total_sales
         FROM customer_sales cs
         JOIN branches b ON cs.branch_id = b.branch_id
         GROUP BY b.branch_name
         """
         st.dataframe(pd.read_sql(q, conn))
 
-    elif report == "Total Sales by Product":
+    elif query_option == "8. Sales by Product":
         q = """
-        SELECT product_name, SUM(gross_sales) total_sales
+        SELECT product_name, SUM(gross_sales) AS total_sales
         FROM customer_sales
         GROUP BY product_name
         """
         st.dataframe(pd.read_sql(q, conn))
 
-    elif report == "Monthly Sales Trend":
-        q = """
-        SELECT DATE_FORMAT(date,'%Y-%m') month, SUM(gross_sales) total_sales
-        FROM customer_sales
-        GROUP BY month
-        ORDER BY month
-        """
-        st.line_chart(pd.read_sql(q, conn).set_index("month"))
+    elif query_option == "9. Open Sales":
+        st.dataframe(pd.read_sql("SELECT * FROM customer_sales WHERE status='Open'", conn))
 
-    elif report == "Top Customers":
+    elif query_option == "10. Closed Sales":
+        st.dataframe(pd.read_sql("SELECT * FROM customer_sales WHERE status='Closed'", conn))
+
+    elif query_option == "11. Payment Summary":
         q = """
-        SELECT name, SUM(gross_sales) total_spent
+        SELECT payment_method, SUM(amount_paid) total
+        FROM payment_splits
+        GROUP BY payment_method
+        """
+        st.dataframe(pd.read_sql(q, conn))
+
+    elif query_option == "12. Top Sales":
+        q = """
+        SELECT name, SUM(gross_sales) total_sales
         FROM customer_sales
         GROUP BY name
-        ORDER BY total_spent DESC
+        ORDER BY total_sales DESC
         LIMIT 10
         """
         st.dataframe(pd.read_sql(q, conn))
 
-    elif report == "Pending vs Received":
+    elif query_option == "13. Date Filter Sales":
+        st.dataframe(pd.read_sql("SELECT * FROM customer_sales WHERE date >= CURDATE() - INTERVAL 30 DAY", conn))
+
+    elif query_option == "14. Customer Payment Summary":
         q = """
-        SELECT SUM(gross_sales) sales,
-               SUM(received_amount) received,
-               SUM(pending_amount) pending
-        FROM customer_sales
+        SELECT cs.name, SUM(ps.amount_paid) total_paid
+        FROM customer_sales cs
+        JOIN payment_splits ps ON cs.sale_id = ps.sale_id
+        GROUP BY cs.name
         """
         st.dataframe(pd.read_sql(q, conn))
 
-    elif report == "Daily Sales Report":
+    elif query_option == "15. Branch Sales Count":
         q = """
-        SELECT date, SUM(gross_sales) total_sales
-        FROM customer_sales
-        GROUP BY date
-        ORDER BY date
-        """
-        st.line_chart(pd.read_sql(q, conn).set_index("date"))
-
-    elif report == "Branch Performance":
-        q = """
-        SELECT b.branch_name,
-               SUM(cs.gross_sales) sales,
-               SUM(cs.received_amount) received
+        SELECT b.branch_name, COUNT(cs.sale_id) total_sales
         FROM customer_sales cs
         JOIN branches b ON cs.branch_id = b.branch_id
         GROUP BY b.branch_name
