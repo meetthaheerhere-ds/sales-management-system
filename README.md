@@ -4,7 +4,7 @@ A role-based sales & payment tracking dashboard built with **Streamlit + MySQL**
 
 🔗 **Live Demo:** _add your Streamlit Cloud link here after deploying_
 
-![Login Page](screenshots/login.png)
+![Login Page](screenshots/login.jpeg)
 
 ---
 
@@ -41,13 +41,13 @@ Multi-branch retail businesses need a way to track sales, payments, and outstand
 ## 📸 Screenshots
 
 **Super Admin view** — consolidated KPIs across all branches
-![Super Admin Dashboard](screenshots/dashboard_superadmin.png)
+![Super Admin Dashboard](screenshots/dashboard_superadmin.jpeg)
 
 **Branch Admin view** — scoped automatically to the logged-in branch, no branch selector shown
-![Branch Admin Dashboard](screenshots/dashboard_branch_admin.png)
+![Branch Admin Dashboard](screenshots/dashboard_branch_admin.jpeg)
 
 **Filtered sales data table** with CSV export
-![Filtered Sales Data](screenshots/filtered_data_table.png)
+![Filtered Sales Data](screenshots/filtered_data_table.jpeg)
 
 **SQL Query Analysis Explorer** — 15 pre-built analytical queries run on demand
 ![SQL Query Explorer](screenshots/sql_query_explorer.png)
@@ -88,14 +88,14 @@ sales-management-system/
 │   └── payment_splits.csv
 ├── docs/
 │   ├── Sales Management System Presentation.pptx
-│   └── Sales Management System Report.pdf
+│   └── Sales Management System.docx.pdf
 ├── db/
 │   └── schema.sql
 ├── screenshots/
-│   ├── login.png
-│   ├── dashboard_superadmin.png
-│   ├── dashboard_branch_admin.png
-│   ├── filtered_data_table.png
+│   ├── login.jpeg
+│   ├── dashboard_superadmin.jpeg
+│   ├── dashboard_branch_admin.jpeg
+│   ├── filtered_data_table.jpeg
 │   └── sql_query_explorer.png
 ├── app.py
 ├── db.py
