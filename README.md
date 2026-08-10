@@ -2,8 +2,6 @@
 
 A role-based sales & payment tracking dashboard built with **Streamlit + MySQL**, supporting multi-branch operations, live KPIs, and an embedded SQL analytics explorer.
 
-🔗 **Live Demo:** _add your Streamlit Cloud link here after deploying_
-
 ![Login Page](screenshots/login.jpeg)
 
 ---
